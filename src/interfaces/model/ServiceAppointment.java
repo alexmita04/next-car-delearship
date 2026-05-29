@@ -6,8 +6,8 @@ public class ServiceAppointment {
     private static int idCounter = 1;
 
     public enum Status {
-        SCHEDULED,
-        COMPLETED
+        PENDING,
+        DONE
     }
 
     private final int id;
@@ -17,11 +17,18 @@ public class ServiceAppointment {
     private Status status;
 
     public ServiceAppointment(Car car, LocalDate date, String description) {
-        this.id = idCounter++;
+        this(idCounter++, car, date, description, Status.PENDING);
+    }
+
+    public ServiceAppointment(int id, Car car, LocalDate date, String description, Status status) {
+        this.id = id;
         this.car = car;
         this.date = date;
         this.description = description;
-        this.status = Status.SCHEDULED;
+        this.status = status;
+        if (id >= idCounter) {
+            idCounter = id + 1;
+        }
     }
 
     public int getId() {

@@ -14,13 +14,21 @@ public class Sale {
     private boolean cancelled;
 
     public Sale(Client client, Car car, Salesperson salesperson, LocalDate date, double finalPrice) {
-        this.id = idCounter++;
+        this(idCounter++, client, car, salesperson, date, finalPrice, false);
+    }
+
+    public Sale(int id, Client client, Car car, Salesperson salesperson, LocalDate date,
+                double finalPrice, boolean cancelled) {
+        this.id = id;
         this.client = client;
         this.car = car;
         this.salesperson = salesperson;
         this.date = date;
         this.finalPrice = finalPrice;
-        this.cancelled = false;
+        this.cancelled = cancelled;
+        if (id >= idCounter) {
+            idCounter = id + 1;
+        }
     }
 
     public int getId() {

@@ -31,12 +31,9 @@ public class Main {
             throws CarNotFoundException, InvalidPromotionException, SaleAlreadyCancelledException {
 
         // 1 — Add cars to inventory
-        NewCar bmw = new NewCar("BMW", "3 Series", 2024, 45000, "New", 3);
-        UsedCar audi = new UsedCar("Audi", "A4", 2020, 28000, "Good", 65000, 2);
-        NewCar mercedes = new NewCar("Mercedes", "C-Class", 2024, 52000, "New", 3);
-        carService.addCar(bmw);
-        carService.addCar(audi);
-        carService.addCar(mercedes);
+        NewCar bmw = (NewCar) carService.addCar(new NewCar("BMW", "3 Series", 2024, 45000, "New", 3));
+        UsedCar audi = (UsedCar) carService.addCar(new UsedCar("Audi", "A4", 2020, 28000, "Good", 65000, 2));
+        NewCar mercedes = (NewCar) carService.addCar(new NewCar("Mercedes", "C-Class", 2024, 52000, "New", 3));
         System.out.println("=== Inventory added ===");
 
         // 15 — Apply promotional discount
@@ -52,17 +49,15 @@ public class Main {
         carService.searchCars("BMW", null, null, null).forEach(System.out::println);
 
         // 5 — Add clients
-        Client john = new Client("John Smith", "555-0001", "john@email.com");
-        Client maria = new Client("Maria Johnson", "555-0002", "maria@email.com");
-        clientService.addClient(john);
-        clientService.addClient(maria);
+        Client john = clientService.addClient(new Client("John Smith", "555-0001", "john@email.com"));
+        Client maria = clientService.addClient(new Client("Maria Johnson", "555-0002", "maria@email.com"));
         System.out.println("\n=== Clients added ===");
 
         // 9 — Add salespersons
-        Salesperson andrew = new Salesperson("Andrew Seller", 5000, LocalDate.of(2023, 3, 1), 5.0);
-        Salesperson elena = new Salesperson("Elena Seller", 4800, LocalDate.of(2022, 6, 15), 4.5);
-        saleService.addEmployee(andrew);
-        saleService.addEmployee(elena);
+        Salesperson andrew = saleService.addEmployee(
+                new Salesperson("Andrew Seller", 5000, LocalDate.of(2023, 3, 1), 5.0));
+        Salesperson elena = saleService.addEmployee(
+                new Salesperson("Elena Seller", 4800, LocalDate.of(2022, 6, 15), 4.5));
         System.out.println("Employees added");
 
         // 7 — Register sale

@@ -12,11 +12,18 @@ public abstract class Employee {
     private boolean active;
 
     protected Employee(String name, double salary, LocalDate hireDate) {
-        this.id = idCounter++;
+        this(idCounter++, name, salary, hireDate, true);
+    }
+
+    protected Employee(int id, String name, double salary, LocalDate hireDate, boolean active) {
+        this.id = id;
         this.name = name;
         this.salary = salary;
         this.hireDate = hireDate;
-        this.active = true;
+        this.active = active;
+        if (id >= idCounter) {
+            idCounter = id + 1;
+        }
     }
 
     public int getId() {

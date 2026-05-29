@@ -16,14 +16,26 @@ public abstract class Car implements Discountable, Comparable<Car> {
     private double discountPercent;
 
     protected Car(String brand, String model, int year, double price, String condition) {
-        this.id = idCounter++;
+        this(idCounter++, brand, model, year, price, condition, true, 0);
+    }
+
+    protected Car(int id, String brand, String model, int year, double price, String condition,
+                  boolean available, double discountPercent) {
+        this.id = id;
         this.brand = brand;
         this.model = model;
         this.year = year;
         this.price = price;
         this.condition = condition;
-        this.available = true;
-        this.discountPercent = 0;
+        this.available = available;
+        this.discountPercent = discountPercent;
+        syncIdCounter(id);
+    }
+
+    private static void syncIdCounter(int id) {
+        if (id >= idCounter) {
+            idCounter = id + 1;
+        }
     }
 
     public int getId() {
@@ -94,6 +106,10 @@ public abstract class Car implements Discountable, Comparable<Car> {
     @Override
     public double getDiscountPercent() {
         return discountPercent;
+    }
+
+    protected void setDiscountPercent(double discountPercent) {
+        this.discountPercent = discountPercent;
     }
 
     @Override

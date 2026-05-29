@@ -8,6 +8,12 @@ public class NewCar extends Car {
         this.warrantyYears = warrantyYears;
     }
 
+    public NewCar(int id, String brand, String model, int year, double price, String condition,
+                  int warrantyYears, boolean available, double discountPercent) {
+        super(id, brand, model, year, price, condition, available, discountPercent);
+        this.warrantyYears = warrantyYears;
+    }
+
     public int getWarrantyYears() {
         return warrantyYears;
     }

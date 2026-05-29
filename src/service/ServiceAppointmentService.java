@@ -1,54 +1,53 @@
 package service;
 
 import exceptions.CarNotFoundException;
-import model.Car;
 import model.ServiceAppointment;
 import model.ServiceAppointment.Status;
+import repository.CarRepository;
+import repository.ServiceAppointmentRepository;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class ServiceAppointmentService {
-    private final List<ServiceAppointment> appointments = new ArrayList<>();
-    private final CarService carService;
+    private final ServiceAppointmentRepository appointmentRepository;
+    private final CarRepository carRepository;
 
     public ServiceAppointmentService(CarService carService) {
-        this.carService = carService;
+        this(new ServiceAppointmentRepository(), new CarRepository());
     }
 
-    /** Action 12: Add a service appointment for a car */
+    public ServiceAppointmentService(ServiceAppointmentRepository appointmentRepository,
+                                     CarRepository carRepository) {
+        this.appointmentRepository = appointmentRepository;
+        this.carRepository = carRepository;
+    }
+
     public ServiceAppointment addServiceAppointment(int carId, LocalDate date, String description)
             throws CarNotFoundException {
-        Car car = carService.findCarById(carId);
-        ServiceAppointment appointment = new ServiceAppointment(car, date, description);
-        appointments.add(appointment);
-        return appointment;
+        var car = carRepository.findById(carId)
+                .orElseThrow(() -> new CarNotFoundException(carId));
+        return appointmentRepository.insert(new ServiceAppointment(car, date, description));
     }
 
-    /** Action 13: Mark a service appointment as completed */
     public void markAsCompleted(int appointmentId) {
         ServiceAppointment appointment = findAppointmentById(appointmentId)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Service appointment with ID " + appointmentId + " does not exist."));
-        appointment.setStatus(Status.COMPLETED);
+        appointment.setStatus(Status.DONE);
+        appointmentRepository.update(appointment);
     }
 
     public List<ServiceAppointment> getAppointmentsByStatus(Status status) {
-        return appointments.stream()
-                .filter(a -> a.getStatus() == status)
-                .collect(Collectors.toList());
+        return appointmentRepository.findByStatus(status);
     }
 
     public Optional<ServiceAppointment> findAppointmentById(int appointmentId) {
-        return appointments.stream()
-                .filter(a -> a.getId() == appointmentId)
-                .findFirst();
+        return appointmentRepository.findById(appointmentId);
     }
 
     public List<ServiceAppointment> getAppointments() {
-        return new ArrayList<>(appointments);
+        return appointmentRepository.findAll();
     }
 }

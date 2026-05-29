@@ -9,10 +9,17 @@ public class Client {
     private String email;
 
     public Client(String name, String phone, String email) {
-        this.id = idCounter++;
+        this(idCounter++, name, phone, email);
+    }
+
+    public Client(int id, String name, String phone, String email) {
+        this.id = id;
         this.name = name;
         this.phone = phone;
         this.email = email;
+        if (id >= idCounter) {
+            idCounter = id + 1;
+        }
     }
 
     public int getId() {

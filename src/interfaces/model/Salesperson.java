@@ -10,6 +10,12 @@ public class Salesperson extends Employee {
         this.commissionPercent = commissionPercent;
     }
 
+    public Salesperson(int id, String name, double salary, LocalDate hireDate,
+                       double commissionPercent, boolean active) {
+        super(id, name, salary, hireDate, active);
+        this.commissionPercent = commissionPercent;
+    }
+
     public double getCommissionPercent() {
         return commissionPercent;
     }

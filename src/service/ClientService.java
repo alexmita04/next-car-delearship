@@ -1,30 +1,46 @@
 package service;
 
 import model.Client;
+import repository.ClientRepository;
 
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class ClientService {
-    private final Map<Integer, Client> clients = new HashMap<>();
+    private final ClientRepository clientRepository;
 
-    /** Action 5: Add a new client */
-    public Client addClient(Client client) {
-        clients.put(client.getId(), client);
-        return client;
+    public ClientService() {
+        this(new ClientRepository());
     }
 
-    /** Action 6: Remove a client */
+    public ClientService(ClientRepository clientRepository) {
+        this.clientRepository = clientRepository;
+    }
+
+    public Client addClient(Client client) {
+        return clientRepository.insert(client);
+    }
+
     public boolean removeClient(int clientId) {
-        return clients.remove(clientId) != null;
+        if (clientRepository.findById(clientId).isEmpty()) {
+            return false;
+        }
+        clientRepository.deleteById(clientId);
+        return true;
     }
 
     public Optional<Client> findClientById(int clientId) {
-        return Optional.ofNullable(clients.get(clientId));
+        return clientRepository.findById(clientId);
     }
 
     public Map<Integer, Client> getClients() {
-        return new HashMap<>(clients);
+        return clientRepository.findAll().stream()
+                .collect(Collectors.toMap(Client::getId, client -> client));
+    }
+
+    public List<Client> getAllClients() {
+        return clientRepository.findAll();
     }
 }

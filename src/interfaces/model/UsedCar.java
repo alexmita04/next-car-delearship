@@ -11,6 +11,13 @@ public class UsedCar extends Car {
         this.numberOfOwners = numberOfOwners;
     }
 
+    public UsedCar(int id, String brand, String model, int year, double price, String condition,
+                   int kilometers, int numberOfOwners, boolean available, double discountPercent) {
+        super(id, brand, model, year, price, condition, available, discountPercent);
+        this.kilometers = kilometers;
+        this.numberOfOwners = numberOfOwners;
+    }
+
     public int getKilometers() {
         return kilometers;
     }

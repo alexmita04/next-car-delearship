@@ -1,12 +1,36 @@
 package model;
 
 public class Promotion {
+    private int id;
     private Car car;
     private double discountPercent;
+    private boolean active;
 
     public Promotion(Car car, double discountPercent) {
+        this(0, car, discountPercent, true);
+    }
+
+    public Promotion(int id, Car car, double discountPercent, boolean active) {
+        this.id = id;
         this.car = car;
         this.discountPercent = discountPercent;
+        this.active = active;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     public Car getCar() {
