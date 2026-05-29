@@ -50,6 +50,7 @@ public class SaleService {
         Sale sale = saleRepository.insert(new Sale(client, car, salesperson, date, finalPrice));
         car.setAvailable(false);
         carRepository.update(car);
+        AuditService.getInstance().logAction("REGISTER_SALE");
         return sale;
     }
 
@@ -64,10 +65,13 @@ public class SaleService {
         var car = sale.getCar();
         car.setAvailable(true);
         carRepository.update(car);
+        AuditService.getInstance().logAction("CANCEL_SALE");
     }
 
     public Salesperson addEmployee(Salesperson salesperson) {
-        return employeeRepository.insert(salesperson);
+        Salesperson saved = employeeRepository.insert(salesperson);
+        AuditService.getInstance().logAction("ADD_EMPLOYEE");
+        return saved;
     }
 
     public boolean fireEmployee(int employeeId) {
@@ -75,6 +79,7 @@ public class SaleService {
                 .map(sp -> {
                     employeeRepository.setActive(employeeId, false);
                     sp.setActive(false);
+                    AuditService.getInstance().logAction("FIRE_EMPLOYEE");
                     return true;
                 })
                 .orElse(false);
@@ -87,6 +92,7 @@ public class SaleService {
                 .orElseThrow(() -> new IllegalArgumentException("Salesperson with ID " + salespersonId + " does not exist."));
         sale.setSalesperson(salesperson);
         saleRepository.update(sale);
+        AuditService.getInstance().logAction("ASSIGN_SALESPERSON");
     }
 
     public SalesReport generateSalesReport(LocalDate startDate, LocalDate endDate) {
@@ -98,11 +104,15 @@ public class SaleService {
                 .mapToDouble(Sale::getFinalPrice)
                 .sum();
 
-        return new SalesReport(startDate, endDate, totalRevenue, periodSales.size(), periodSales);
+        SalesReport report = new SalesReport(startDate, endDate, totalRevenue, periodSales.size(), periodSales);
+        AuditService.getInstance().logAction("GENERATE_SALES_REPORT");
+        return report;
     }
 
     public List<Sale> getClientSalesHistory(int clientId) {
-        return saleRepository.findByClientId(clientId);
+        List<Sale> history = saleRepository.findByClientId(clientId);
+        AuditService.getInstance().logAction("GET_CLIENT_SALES_HISTORY");
+        return history;
     }
 
     public Optional<Sale> findSaleById(int saleId) {

@@ -20,7 +20,9 @@ public class ClientService {
     }
 
     public Client addClient(Client client) {
-        return clientRepository.insert(client);
+        Client saved = clientRepository.insert(client);
+        AuditService.getInstance().logAction("ADD_CLIENT");
+        return saved;
     }
 
     public boolean removeClient(int clientId) {
@@ -28,6 +30,7 @@ public class ClientService {
             return false;
         }
         clientRepository.deleteById(clientId);
+        AuditService.getInstance().logAction("REMOVE_CLIENT");
         return true;
     }
 

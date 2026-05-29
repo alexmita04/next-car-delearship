@@ -28,7 +28,9 @@ public class ServiceAppointmentService {
             throws CarNotFoundException {
         var car = carRepository.findById(carId)
                 .orElseThrow(() -> new CarNotFoundException(carId));
-        return appointmentRepository.insert(new ServiceAppointment(car, date, description));
+        ServiceAppointment saved = appointmentRepository.insert(new ServiceAppointment(car, date, description));
+        AuditService.getInstance().logAction("ADD_SERVICE_APPOINTMENT");
+        return saved;
     }
 
     public void markAsCompleted(int appointmentId) {
@@ -37,6 +39,7 @@ public class ServiceAppointmentService {
                         "Service appointment with ID " + appointmentId + " does not exist."));
         appointment.setStatus(Status.DONE);
         appointmentRepository.update(appointment);
+        AuditService.getInstance().logAction("COMPLETE_SERVICE_APPOINTMENT");
     }
 
     public List<ServiceAppointment> getAppointmentsByStatus(Status status) {

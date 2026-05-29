@@ -10,6 +10,7 @@
 
 # Logs and JVM crash reports
 *.log
+audit.csv
 hs_err_pid*
 replay_pid*
 
