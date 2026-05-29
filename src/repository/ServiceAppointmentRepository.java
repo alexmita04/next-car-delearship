@@ -74,6 +74,10 @@ public class ServiceAppointmentRepository extends GenericRepository<ServiceAppoi
         executeUpdate("DELETE FROM service_appts WHERE id = ?", id);
     }
 
+    public void deleteByCarId(int carId) {
+        executeUpdate("DELETE FROM service_appts WHERE car_id = ?", carId);
+    }
+
     @Override
     protected ServiceAppointment mapRow(ResultSet rs) throws SQLException {
         int id = rs.getInt("id");

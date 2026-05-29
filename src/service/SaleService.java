@@ -77,6 +77,18 @@ public class SaleService {
         AuditService.getInstance().logAction("CANCEL_SALE");
     }
 
+    public void deleteSale(int saleId) {
+        Sale sale = findSaleById(saleId)
+                .orElseThrow(() -> new IllegalArgumentException("Vânzarea cu ID " + saleId + " nu există."));
+        if (!sale.isCancelled()) {
+            var car = sale.getCar();
+            car.setAvailable(true);
+            carRepository.update(car);
+        }
+        saleRepository.deleteById(saleId);
+        AuditService.getInstance().logAction("DELETE_SALE");
+    }
+
     public Salesperson addEmployee(Salesperson salesperson) {
         Salesperson saved = employeeRepository.insert(salesperson);
         AuditService.getInstance().logAction("ADD_EMPLOYEE");
@@ -135,6 +147,12 @@ public class SaleService {
     public Map<Integer, Sale> getSales() {
         return saleRepository.findAll().stream()
                 .collect(Collectors.toMap(Sale::getId, sale -> sale, (a, b) -> a, HashMap::new));
+    }
+
+    public List<Sale> getAllSales() {
+        List<Sale> sales = saleRepository.findAll();
+        AuditService.getInstance().logAction("LIST_SALES");
+        return sales;
     }
 
     public List<Salesperson> getActiveEmployees() {

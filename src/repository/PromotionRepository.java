@@ -69,6 +69,10 @@ public class PromotionRepository extends GenericRepository<Promotion> {
         executeUpdate("UPDATE promotions SET active = FALSE WHERE car_id = ? AND active = TRUE", carId);
     }
 
+    public void deleteByCarId(int carId) {
+        executeUpdate("DELETE FROM promotions WHERE car_id = ?", carId);
+    }
+
     @Override
     protected Promotion mapRow(ResultSet rs) throws SQLException {
         int id = rs.getInt("id");

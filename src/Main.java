@@ -1,5 +1,7 @@
 import builder.CarBuilder;
+import exceptions.CarDeletionException;
 import exceptions.CarNotFoundException;
+import exceptions.ClientDeletionException;
 import exceptions.InvalidPromotionException;
 import exceptions.SaleAlreadyCancelledException;
 import factory.CarFactory;
@@ -31,7 +33,8 @@ public class Main {
 
     private static void demo(CarService carService, ClientService clientService,
                              SaleService saleService, ServiceAppointmentService appointmentService)
-            throws CarNotFoundException, InvalidPromotionException, SaleAlreadyCancelledException {
+            throws CarNotFoundException, InvalidPromotionException, SaleAlreadyCancelledException,
+                   CarDeletionException, ClientDeletionException {
 
         // 1 — Add cars to inventory (Builder + Factory)
         NewCar bmw = (NewCar) carService.addCar(CarBuilder.forNewCar()

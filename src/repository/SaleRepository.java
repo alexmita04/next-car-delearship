@@ -37,6 +37,14 @@ public class SaleRepository extends GenericRepository<Sale> {
         return query(BASE_SELECT + " WHERE client_id = ? ORDER BY date DESC", clientId);
     }
 
+    public boolean hasSalesForCar(int carId) {
+        return !query(BASE_SELECT + " WHERE car_id = ? LIMIT 1", carId).isEmpty();
+    }
+
+    public boolean hasSalesForClient(int clientId) {
+        return !query(BASE_SELECT + " WHERE client_id = ? LIMIT 1", clientId).isEmpty();
+    }
+
     public List<Sale> findByDateRange(LocalDate startDate, LocalDate endDate) {
         return query(
                 BASE_SELECT + " WHERE date >= ? AND date <= ? ORDER BY date",
