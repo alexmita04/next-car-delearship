@@ -5,6 +5,9 @@ import exceptions.SaleAlreadyCancelledException;
 import model.Sale;
 import model.SalesReport;
 import model.Salesperson;
+import observer.AuditSaleObserver;
+import observer.SaleSubject;
+import observer.SalesReportObserver;
 import repository.CarRepository;
 import repository.EmployeeRepository;
 import repository.SaleRepository;
@@ -21,6 +24,8 @@ public class SaleService {
     private final EmployeeRepository employeeRepository;
     private final CarRepository carRepository;
     private final ClientService clientService;
+    private final SaleSubject saleSubject;
+    private final SalesReportObserver salesReportObserver;
 
     public SaleService(CarService carService, ClientService clientService) {
         this(new SaleRepository(), new EmployeeRepository(), new CarRepository(), clientService);
@@ -32,6 +37,10 @@ public class SaleService {
         this.employeeRepository = employeeRepository;
         this.carRepository = carRepository;
         this.clientService = clientService;
+        this.saleSubject = new SaleSubject();
+        this.salesReportObserver = new SalesReportObserver();
+        this.saleSubject.subscribe(new AuditSaleObserver());
+        this.saleSubject.subscribe(salesReportObserver);
     }
 
     public Sale registerSale(int clientId, int carId, int salespersonId, LocalDate date)
@@ -50,7 +59,7 @@ public class SaleService {
         Sale sale = saleRepository.insert(new Sale(client, car, salesperson, date, finalPrice));
         car.setAvailable(false);
         carRepository.update(car);
-        AuditService.getInstance().logAction("REGISTER_SALE");
+        saleSubject.notifySaleCompleted(sale);
         return sale;
     }
 
@@ -130,5 +139,13 @@ public class SaleService {
 
     public List<Salesperson> getActiveEmployees() {
         return employeeRepository.findActive();
+    }
+
+    public SalesReportObserver getSalesReportObserver() {
+        return salesReportObserver;
+    }
+
+    public SaleSubject getSaleSubject() {
+        return saleSubject;
     }
 }

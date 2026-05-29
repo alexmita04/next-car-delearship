@@ -1,5 +1,6 @@
 package service;
 
+import decorator.PromotionDecorator;
 import exceptions.CarNotFoundException;
 import exceptions.InvalidPromotionException;
 import model.Car;
@@ -8,6 +9,7 @@ import repository.CarRepository;
 import repository.PromotionRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CarService {
     private final CarRepository carRepository;
@@ -63,6 +65,14 @@ public class CarService {
         List<Car> cars = carRepository.findAvailableSortedByPrice();
         AuditService.getInstance().logAction("LIST_AVAILABLE_CARS");
         return cars;
+    }
+
+    public List<String> listAvailableCarsWithPromotionDisplay() {
+        return carRepository.findAvailableSortedByPrice().stream()
+                .map(car -> car.getDiscountPercent() > 0
+                        ? new PromotionDecorator(car).toString()
+                        : car.toString())
+                .collect(Collectors.toList());
     }
 
     public Car findCarById(int carId) throws CarNotFoundException {

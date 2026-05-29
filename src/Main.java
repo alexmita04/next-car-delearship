@@ -1,6 +1,9 @@
+import builder.CarBuilder;
 import exceptions.CarNotFoundException;
 import exceptions.InvalidPromotionException;
 import exceptions.SaleAlreadyCancelledException;
+import factory.CarFactory;
+import factory.CarType;
 import model.Client;
 import model.NewCar;
 import model.Salesperson;
@@ -30,19 +33,29 @@ public class Main {
                              SaleService saleService, ServiceAppointmentService appointmentService)
             throws CarNotFoundException, InvalidPromotionException, SaleAlreadyCancelledException {
 
-        // 1 — Add cars to inventory
-        NewCar bmw = (NewCar) carService.addCar(new NewCar("BMW", "3 Series", 2024, 45000, "New", 3));
-        UsedCar audi = (UsedCar) carService.addCar(new UsedCar("Audi", "A4", 2020, 28000, "Good", 65000, 2));
-        NewCar mercedes = (NewCar) carService.addCar(new NewCar("Mercedes", "C-Class", 2024, 52000, "New", 3));
+        // 1 — Add cars to inventory (Builder + Factory)
+        NewCar bmw = (NewCar) carService.addCar(CarBuilder.forNewCar()
+                .brand("BMW").model("3 Series").year(2024).price(45000)
+                .condition("New").warrantyYears(3).build());
+        UsedCar audi = (UsedCar) carService.addCar(CarBuilder.forUsedCar()
+                .brand("Audi").model("A4").year(2020).price(28000)
+                .condition("Good").kilometers(65000).numberOfOwners(2).build());
+        NewCar mercedes = (NewCar) carService.addCar(CarBuilder.forNewCar()
+                .brand("Mercedes").model("C-Class").year(2024).price(52000)
+                .condition("New").warrantyYears(3).build());
+
+        // Factory demo — create(type) returns correct subclass
+        System.out.println("Factory NEW: " + CarFactory.create(CarType.NEW).getClass().getSimpleName());
+        System.out.println("Factory USED: " + CarFactory.create(CarType.USED).getClass().getSimpleName());
         System.out.println("=== Inventory added ===");
 
         // 15 — Apply promotional discount
         carService.applyPromotion(audi.getId(), 10);
         System.out.println("10% discount applied to Audi A4");
 
-        // 16 — List available cars sorted by price
+        // 16 — List available cars sorted by price (Decorator for promo display)
         System.out.println("\n=== Available cars (sorted by price) ===");
-        carService.listAvailableCarsSortedByPrice().forEach(System.out::println);
+        carService.listAvailableCarsWithPromotionDisplay().forEach(System.out::println);
 
         // 4 — Search cars
         System.out.println("\n=== Search BMW ===");
