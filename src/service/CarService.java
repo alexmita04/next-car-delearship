@@ -46,7 +46,7 @@ public class CarService {
         findCarById(carId);
         if (saleRepository.hasSalesForCar(carId)) {
             throw new CarDeletionException(
-                    "Mașina nu poate fi ștearsă deoarece are vânzări înregistrate.");
+                    "Car can't be deleted because it has sales.");
         }
         promotionRepository.deleteByCarId(carId);
         serviceAppointmentRepository.deleteByCarId(carId);

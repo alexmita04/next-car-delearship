@@ -15,10 +15,10 @@ import service.CarService;
 
 public class AddCarDialog extends Dialog<Car> {
     public AddCarDialog(CarService carService) {
-        setTitle("Adaugă mașină");
-        setHeaderText("Completează datele mașinii");
+        setTitle("Add car");
+        setHeaderText("Enter car details");
 
-        ButtonType saveButton = new ButtonType("Salvează", ButtonBar.ButtonData.OK_DONE);
+        ButtonType saveButton = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
         getDialogPane().getButtonTypes().addAll(saveButton, ButtonType.CANCEL);
 
         ComboBox<CarType> typeBox = new ComboBox<>();
@@ -34,26 +34,26 @@ public class AddCarDialog extends Dialog<Car> {
         TextField kmField = new TextField("0");
         TextField ownersField = new TextField("1");
 
-        Label warrantyLabel = new Label("Garanție (ani):");
-        Label kmLabel = new Label("Kilometri:");
-        Label ownersLabel = new Label("Proprietari anteriori:");
+        Label warrantyLabel = new Label("Warranty (years):");
+        Label kmLabel = new Label("Kilometers:");
+        Label ownersLabel = new Label("Previous owners:");
 
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(20, 10, 10, 10));
 
-        grid.add(new Label("Tip:"), 0, 0);
+        grid.add(new Label("Type:"), 0, 0);
         grid.add(typeBox, 1, 0);
-        grid.add(new Label("Marcă:"), 0, 1);
+        grid.add(new Label("Brand:"), 0, 1);
         grid.add(brandField, 1, 1);
         grid.add(new Label("Model:"), 0, 2);
         grid.add(modelField, 1, 2);
-        grid.add(new Label("An:"), 0, 3);
+        grid.add(new Label("Year:"), 0, 3);
         grid.add(yearField, 1, 3);
-        grid.add(new Label("Preț:"), 0, 4);
+        grid.add(new Label("Price:"), 0, 4);
         grid.add(priceField, 1, 4);
-        grid.add(new Label("Stare:"), 0, 5);
+        grid.add(new Label("Condition:"), 0, 5);
         grid.add(conditionField, 1, 5);
         grid.add(warrantyLabel, 0, 6);
         grid.add(warrantyField, 1, 6);
@@ -98,7 +98,7 @@ public class AddCarDialog extends Dialog<Car> {
 
                 return carService.addCar(car);
             } catch (Exception ex) {
-                AlertHelper.showError("Eroare", ex.getMessage());
+                AlertHelper.showError("Error", ex.getMessage());
                 return null;
             }
         });

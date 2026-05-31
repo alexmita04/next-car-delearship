@@ -35,16 +35,16 @@ public class MainView {
     }
 
     private MenuBar createMenuBar() {
-        MenuItem inventoryItem = new MenuItem("Inventar");
+        MenuItem inventoryItem = new MenuItem("Inventory");
         inventoryItem.setOnAction(e -> showInventory());
 
-        MenuItem salesItem = new MenuItem("Vânzări");
+        MenuItem salesItem = new MenuItem("Sales");
         salesItem.setOnAction(e -> showSales());
 
-        MenuItem clientsItem = new MenuItem("Clienți");
+        MenuItem clientsItem = new MenuItem("Clients");
         clientsItem.setOnAction(e -> showClients());
 
-        Menu menu = new Menu("Meniu");
+        Menu menu = new Menu("Menu");
         menu.getItems().addAll(inventoryItem, salesItem, clientsItem);
 
         MenuBar menuBar = new MenuBar(menu);

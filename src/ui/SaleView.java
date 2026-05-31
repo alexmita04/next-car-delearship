@@ -49,34 +49,34 @@ public class SaleView extends BorderPane {
         TableColumn<Sale, String> clientCol = new TableColumn<>("Client");
         clientCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getClient().getName()));
 
-        TableColumn<Sale, String> carCol = new TableColumn<>("Mașină");
+        TableColumn<Sale, String> carCol = new TableColumn<>("Car");
         carCol.setCellValueFactory(data -> {
             Sale sale = data.getValue();
             return new SimpleStringProperty(sale.getCar().getBrand() + " " + sale.getCar().getModel());
         });
 
-        TableColumn<Sale, String> salespersonCol = new TableColumn<>("Vânzător");
+        TableColumn<Sale, String> salespersonCol = new TableColumn<>("Salesperson");
         salespersonCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getSalesperson().getName()));
 
-        TableColumn<Sale, String> dateCol = new TableColumn<>("Data");
+        TableColumn<Sale, String> dateCol = new TableColumn<>("Date");
         dateCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getDate().toString()));
 
-        TableColumn<Sale, String> priceCol = new TableColumn<>("Preț final");
+        TableColumn<Sale, String> priceCol = new TableColumn<>("Final price");
         priceCol.setCellValueFactory(data -> new SimpleStringProperty(
                 String.format("%.2f", data.getValue().getFinalPrice())));
 
         TableColumn<Sale, String> statusCol = new TableColumn<>("Status");
         statusCol.setCellValueFactory(data -> new SimpleStringProperty(
-                data.getValue().isCancelled() ? "Anulată" : "Activă"));
+                data.getValue().isCancelled() ? "Cancelled" : "Active"));
 
         table.getColumns().addAll(idCol, clientCol, carCol, salespersonCol, dateCol, priceCol, statusCol);
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
     }
 
     private ToolBar createToolbar() {
-        Button registerButton = new Button("Înregistrare vânzare");
-        Button cancelButton = new Button("Anulează vânzare");
-        Button deleteButton = new Button("Șterge");
+        Button registerButton = new Button("Register sale");
+        Button cancelButton = new Button("Cancel sale");
+        Button deleteButton = new Button("Delete");
 
         registerButton.setOnAction(e -> onRegisterSale());
         cancelButton.setOnAction(e -> onCancelSale());
@@ -97,14 +97,14 @@ public class SaleView extends BorderPane {
         List<Salesperson> employees = saleService.getActiveEmployees();
 
         if (clients.isEmpty() || availableCars.isEmpty() || employees.isEmpty()) {
-            AlertHelper.showError("Date insuficiente",
-                    "Ai nevoie de cel puțin un client, o mașină disponibilă și un vânzător activ.");
+            AlertHelper.showError("Insufficient data",
+                    "You need at least one client, one available car, and one active salesperson.");
             return;
         }
 
         Dialog<Sale> dialog = new Dialog<>();
-        dialog.setTitle("Înregistrare vânzare");
-        dialog.setHeaderText("Selectează client, mașină și vânzător");
+        dialog.setTitle("Register sale");
+        dialog.setHeaderText("Select client, car, and salesperson");
 
         ComboBox<Client> clientBox = new ComboBox<>(FXCollections.observableArrayList(clients));
         clientBox.setPromptText("Client");
@@ -121,7 +121,7 @@ public class SaleView extends BorderPane {
         });
 
         ComboBox<Car> carBox = new ComboBox<>(FXCollections.observableArrayList(availableCars));
-        carBox.setPromptText("Mașină");
+        carBox.setPromptText("Car");
         carBox.setConverter(new javafx.util.StringConverter<>() {
             @Override
             public String toString(Car car) {
@@ -135,7 +135,7 @@ public class SaleView extends BorderPane {
         });
 
         ComboBox<Salesperson> salespersonBox = new ComboBox<>(FXCollections.observableArrayList(employees));
-        salespersonBox.setPromptText("Vânzător");
+        salespersonBox.setPromptText("Salesperson");
         salespersonBox.setConverter(new javafx.util.StringConverter<>() {
             @Override
             public String toString(Salesperson sp) {
@@ -156,16 +156,16 @@ public class SaleView extends BorderPane {
         grid.setPadding(new Insets(20, 10, 10, 10));
         grid.add(new Label("Client:"), 0, 0);
         grid.add(clientBox, 1, 0);
-        grid.add(new Label("Mașină:"), 0, 1);
+        grid.add(new Label("Car:"), 0, 1);
         grid.add(carBox, 1, 1);
-        grid.add(new Label("Vânzător:"), 0, 2);
+        grid.add(new Label("Salesperson:"), 0, 2);
         grid.add(salespersonBox, 1, 2);
-        grid.add(new Label("Data:"), 0, 3);
+        grid.add(new Label("Date:"), 0, 3);
         grid.add(datePicker, 1, 3);
 
         dialog.getDialogPane().setContent(grid);
         dialog.getDialogPane().getButtonTypes().addAll(
-                new javafx.scene.control.ButtonType("Salvează", javafx.scene.control.ButtonBar.ButtonData.OK_DONE),
+                new javafx.scene.control.ButtonType("Save", javafx.scene.control.ButtonBar.ButtonData.OK_DONE),
                 javafx.scene.control.ButtonType.CANCEL);
 
         dialog.setResultConverter(button -> {
@@ -173,7 +173,7 @@ public class SaleView extends BorderPane {
                 return null;
             }
             if (clientBox.getValue() == null || carBox.getValue() == null || salespersonBox.getValue() == null) {
-                AlertHelper.showError("Validare", "Completează toate câmpurile.");
+                AlertHelper.showError("Validation", "Fill in all fields.");
                 return null;
             }
             try {
@@ -184,7 +184,7 @@ public class SaleView extends BorderPane {
                         datePicker.getValue()
                 );
             } catch (Exception ex) {
-                AlertHelper.showError("Eroare", ex.getMessage());
+                AlertHelper.showError("Error", ex.getMessage());
                 return null;
             }
         });
@@ -196,42 +196,42 @@ public class SaleView extends BorderPane {
     private void onCancelSale() {
         Sale selected = table.getSelectionModel().getSelectedItem();
         if (selected == null) {
-            AlertHelper.showError("Selecție", "Selectează o vânzare din listă.");
+            AlertHelper.showError("Selection", "Select a sale from the list.");
             return;
         }
         if (selected.isCancelled()) {
-            AlertHelper.showInfo("Info", "Vânzarea este deja anulată.");
+            AlertHelper.showInfo("Info", "This sale is already cancelled.");
             return;
         }
-        if (!AlertHelper.confirm("Confirmare", "Anulezi vânzarea #" + selected.getId() + "?")) {
+        if (!AlertHelper.confirm("Confirmation", "Cancel sale #" + selected.getId() + "?")) {
             return;
         }
         try {
             saleService.cancelSale(selected.getId());
             refresh();
         } catch (Exception ex) {
-            AlertHelper.showError("Eroare", ex.getMessage());
+            AlertHelper.showError("Error", ex.getMessage());
         }
     }
 
     private void onDeleteSale() {
         Sale selected = table.getSelectionModel().getSelectedItem();
         if (selected == null) {
-            AlertHelper.showError("Selecție", "Selectează o vânzare din listă.");
+            AlertHelper.showError("Selection", "Select a sale from the list.");
             return;
         }
         String message = selected.isCancelled()
-                ? "Ștergi definitiv vânzarea anulată #" + selected.getId() + "?"
-                : "Ștergi definitiv vânzarea #" + selected.getId()
-                + "? Mașina va redeveni disponibilă în inventar.";
-        if (!AlertHelper.confirm("Confirmare", message)) {
+                ? "Permanently delete cancelled sale #" + selected.getId() + "?"
+                : "Permanently delete sale #" + selected.getId()
+                + "? The car will become available in inventory again.";
+        if (!AlertHelper.confirm("Confirmation", message)) {
             return;
         }
         try {
             saleService.deleteSale(selected.getId());
             refresh();
         } catch (Exception ex) {
-            AlertHelper.showError("Eroare", ex.getMessage());
+            AlertHelper.showError("Error", ex.getMessage());
         }
     }
 }

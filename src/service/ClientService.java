@@ -35,11 +35,11 @@ public class ClientService {
 
     public void removeClient(int clientId) throws ClientDeletionException {
         if (clientRepository.findById(clientId).isEmpty()) {
-            throw new ClientDeletionException("Clientul nu există.");
+            throw new ClientDeletionException("Client not found.");
         }
         if (saleRepository.hasSalesForClient(clientId)) {
             throw new ClientDeletionException(
-                    "Clientul nu poate fi șters deoarece are vânzări înregistrate.");
+                    "Client can't be deleted because it has sales.");
         }
         clientRepository.deleteById(clientId);
         AuditService.getInstance().logAction("REMOVE_CLIENT");

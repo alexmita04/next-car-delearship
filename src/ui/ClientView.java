@@ -36,10 +36,10 @@ public class ClientView extends BorderPane {
         TableColumn<Client, String> idCol = new TableColumn<>("ID");
         idCol.setCellValueFactory(data -> new SimpleStringProperty(String.valueOf(data.getValue().getId())));
 
-        TableColumn<Client, String> nameCol = new TableColumn<>("Nume");
+        TableColumn<Client, String> nameCol = new TableColumn<>("Name");
         nameCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getName()));
 
-        TableColumn<Client, String> phoneCol = new TableColumn<>("Telefon");
+        TableColumn<Client, String> phoneCol = new TableColumn<>("Phone");
         phoneCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getPhone()));
 
         TableColumn<Client, String> emailCol = new TableColumn<>("Email");
@@ -50,9 +50,9 @@ public class ClientView extends BorderPane {
     }
 
     private ToolBar createToolbar() {
-        Button addButton = new Button("Adaugă");
-        Button deleteButton = new Button("Șterge");
-        Button editButton = new Button("Editează");
+        Button addButton = new Button("Add");
+        Button deleteButton = new Button("Delete");
+        Button editButton = new Button("Edit");
 
         addButton.setOnAction(e -> onAdd());
         deleteButton.setOnAction(e -> onDelete());
@@ -74,24 +74,24 @@ public class ClientView extends BorderPane {
     private void onDelete() {
         Client selected = table.getSelectionModel().getSelectedItem();
         if (selected == null) {
-            AlertHelper.showError("Selecție", "Selectează un client din listă.");
+            AlertHelper.showError("Selection", "Select a client from the list.");
             return;
         }
-        if (!AlertHelper.confirm("Confirmare", "Ștergi clientul " + selected.getName() + "?")) {
+        if (!AlertHelper.confirm("Confirmation", "Delete client " + selected.getName() + "?")) {
             return;
         }
         try {
             clientService.removeClient(selected.getId());
             refresh();
         } catch (Exception ex) {
-            AlertHelper.showError("Eroare", ex.getMessage());
+            AlertHelper.showError("Error", ex.getMessage());
         }
     }
 
     private void onEdit() {
         Client selected = table.getSelectionModel().getSelectedItem();
         if (selected == null) {
-            AlertHelper.showError("Selecție", "Selectează un client din listă.");
+            AlertHelper.showError("Selection", "Select a client from the list.");
             return;
         }
         showClientDialog(selected).ifPresent(client -> refresh());
@@ -99,10 +99,10 @@ public class ClientView extends BorderPane {
 
     private Optional<Client> showClientDialog(Client existing) {
         Dialog<Client> dialog = new Dialog<>();
-        dialog.setTitle(existing == null ? "Adaugă client" : "Editează client");
-        dialog.setHeaderText(existing == null ? "Date client nou" : existing.getName());
+        dialog.setTitle(existing == null ? "Add client" : "Edit client");
+        dialog.setHeaderText(existing == null ? "New client details" : existing.getName());
 
-        ButtonType saveButton = new ButtonType("Salvează", ButtonBar.ButtonData.OK_DONE);
+        ButtonType saveButton = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(saveButton, ButtonType.CANCEL);
 
         TextField nameField = new TextField(existing != null ? existing.getName() : "");
@@ -113,9 +113,9 @@ public class ClientView extends BorderPane {
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(20, 10, 10, 10));
-        grid.add(new Label("Nume:"), 0, 0);
+        grid.add(new Label("Name:"), 0, 0);
         grid.add(nameField, 1, 0);
-        grid.add(new Label("Telefon:"), 0, 1);
+        grid.add(new Label("Phone:"), 0, 1);
         grid.add(phoneField, 1, 1);
         grid.add(new Label("Email:"), 0, 2);
         grid.add(emailField, 1, 2);
@@ -130,7 +130,7 @@ public class ClientView extends BorderPane {
             String phone = phoneField.getText().trim();
             String email = emailField.getText().trim();
             if (name.isBlank() || phone.isBlank() || email.isBlank()) {
-                AlertHelper.showError("Validare", "Completează toate câmpurile.");
+                AlertHelper.showError("Validation", "Fill in all fields.");
                 return null;
             }
             try {
@@ -142,7 +142,7 @@ public class ClientView extends BorderPane {
                 existing.setEmail(email);
                 return clientService.updateClient(existing);
             } catch (Exception ex) {
-                AlertHelper.showError("Eroare", ex.getMessage());
+                AlertHelper.showError("Error", ex.getMessage());
                 return null;
             }
         });

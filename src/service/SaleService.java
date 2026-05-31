@@ -79,7 +79,7 @@ public class SaleService {
 
     public void deleteSale(int saleId) {
         Sale sale = findSaleById(saleId)
-                .orElseThrow(() -> new IllegalArgumentException("Vânzarea cu ID " + saleId + " nu există."));
+                .orElseThrow(() -> new IllegalArgumentException("Sale with ID " + saleId + " does not exist."));
         if (!sale.isCancelled()) {
             var car = sale.getCar();
             car.setAvailable(true);

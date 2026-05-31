@@ -37,27 +37,27 @@ public class InventoryView extends BorderPane {
         TableColumn<Car, String> idCol = new TableColumn<>("ID");
         idCol.setCellValueFactory(data -> new SimpleStringProperty(String.valueOf(data.getValue().getId())));
 
-        TableColumn<Car, String> typeCol = new TableColumn<>("Tip");
+        TableColumn<Car, String> typeCol = new TableColumn<>("Type");
         typeCol.setCellValueFactory(data -> {
             Car car = data.getValue();
-            String type = car instanceof NewCar ? "Nouă" : "Second-hand";
+            String type = car instanceof NewCar ? "New" : "Used";
             return new SimpleStringProperty(type);
         });
 
-        TableColumn<Car, String> brandCol = new TableColumn<>("Marcă");
+        TableColumn<Car, String> brandCol = new TableColumn<>("Brand");
         brandCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getBrand()));
 
         TableColumn<Car, String> modelCol = new TableColumn<>("Model");
         modelCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getModel()));
 
-        TableColumn<Car, String> yearCol = new TableColumn<>("An");
+        TableColumn<Car, String> yearCol = new TableColumn<>("Year");
         yearCol.setCellValueFactory(data -> new SimpleStringProperty(String.valueOf(data.getValue().getYear())));
 
-        TableColumn<Car, String> priceCol = new TableColumn<>("Preț");
+        TableColumn<Car, String> priceCol = new TableColumn<>("Price");
         priceCol.setCellValueFactory(data -> new SimpleStringProperty(String.format("%.2f", data.getValue().getPrice())));
 
-        TableColumn<Car, String> availableCol = new TableColumn<>("Disponibil");
-        availableCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().isAvailable() ? "Da" : "Nu"));
+        TableColumn<Car, String> availableCol = new TableColumn<>("Available");
+        availableCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().isAvailable() ? "Yes" : "No"));
 
         TableColumn<Car, String> discountCol = new TableColumn<>("Discount");
         discountCol.setCellValueFactory(data -> new SimpleStringProperty(
@@ -68,11 +68,11 @@ public class InventoryView extends BorderPane {
     }
 
     private ToolBar createToolbar() {
-        Button addButton = new Button("Adaugă");
-        Button deleteButton = new Button("Șterge");
-        Button editButton = new Button("Editează");
+        Button addButton = new Button("Add");
+        Button deleteButton = new Button("Delete");
+        Button editButton = new Button("Edit");
         TextField searchField = new TextField();
-        searchField.setPromptText("Caută după marcă...");
+        searchField.setPromptText("Search by brand...");
         HBox.setHgrow(searchField, Priority.ALWAYS);
 
         addButton.setOnAction(e -> onAdd());
@@ -80,7 +80,7 @@ public class InventoryView extends BorderPane {
         editButton.setOnAction(e -> onEdit());
         searchField.setOnAction(e -> onSearch(searchField.getText()));
 
-        ToolBar toolbar = new ToolBar(addButton, deleteButton, editButton, new Label("Caută:"), searchField);
+        ToolBar toolbar = new ToolBar(addButton, deleteButton, editButton, new Label("Search:"), searchField);
         toolbar.setPadding(new Insets(5, 0, 5, 0));
         return toolbar;
     }
@@ -98,24 +98,24 @@ public class InventoryView extends BorderPane {
     private void onDelete() {
         Car selected = table.getSelectionModel().getSelectedItem();
         if (selected == null) {
-            AlertHelper.showError("Selecție", "Selectează o mașină din listă.");
+            AlertHelper.showError("Selection", "Select a car from the list.");
             return;
         }
-        if (!AlertHelper.confirm("Confirmare", "Ștergi mașina " + selected.getBrand() + " " + selected.getModel() + "?")) {
+        if (!AlertHelper.confirm("Confirmation", "Delete car " + selected.getBrand() + " " + selected.getModel() + "?")) {
             return;
         }
         try {
             carService.removeCar(selected.getId());
             refresh();
         } catch (Exception ex) {
-            AlertHelper.showError("Eroare", ex.getMessage());
+            AlertHelper.showError("Error", ex.getMessage());
         }
     }
 
     private void onEdit() {
         Car selected = table.getSelectionModel().getSelectedItem();
         if (selected == null) {
-            AlertHelper.showError("Selecție", "Selectează o mașină din listă.");
+            AlertHelper.showError("Selection", "Select a car from the list.");
             return;
         }
         EditCarDialog dialog = new EditCarDialog(selected, carService);
