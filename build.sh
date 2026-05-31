@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# env vars
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 OUT="$ROOT/out"
 LIB="$ROOT/lib"
 JAVAFX_DIR="$LIB/javafx-sdk"
 POSTGRES_JAR="$LIB/postgresql-42.7.5.jar"
 
+# function for detecting the operating system for javafx installation
 detect_javafx_url() {
   local os arch
   os="$(uname -s | tr '[:upper:]' '[:lower:]')"
@@ -29,6 +31,7 @@ detect_javafx_url() {
   esac
 }
 
+# function for ensuring javafx is installed
 ensure_javafx() {
   if [[ -d "$JAVAFX_DIR/lib" ]]; then
     return
@@ -51,6 +54,7 @@ ensure_javafx() {
   echo "JavaFX instalat în $JAVAFX_DIR"
 }
 
+# function for compiling the project
 compile() {
   ensure_javafx
   mkdir -p "$OUT"
@@ -67,20 +71,23 @@ compile() {
   echo "Compilare reușită: $OUT"
 }
 
+# function for running the gui
 run_gui() {
   compile
   java \
     -cp "$OUT:$POSTGRES_JAR" \
     --module-path "$JAVAFX_DIR/lib" \
     --add-modules javafx.controls \
-    ui.CarDealershipApp
+    ui.CarDealershipApp # run the gui
 }
 
+# function for running the console
 run_console() {
   compile
-  java -cp "$OUT:$POSTGRES_JAR" Main
+  java -cp "$OUT:$POSTGRES_JAR" Main # run the console
 }
 
+# switch case for the commands  
 case "${1:-gui}" in
   compile) compile ;;
   gui) run_gui ;;
